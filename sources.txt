@@ -1,6 +1,87 @@
 # UK Magazine - feed sources
-# One feed URL per line.
-# Lines starting with # are ignored.
-# Blank lines are ignored.
+#
+# One feed URL per line. Lines starting with # are ignored.
+#
+# A feed is only useful if its ARTICLE domain is present in the
+# Whitelist E-Gate filter (Core Engine, link 20 -> 36). A feed whose
+# domain is missing is fetched, sent, and then silently discarded.
+#
+# To enable a feed: remove the # from the start of its line.
 
+
+# =====================================================================
+# ACTIVE - domain already in the whitelist
+# =====================================================================
+
+# --- BBC News (bbc.co.uk) -------------------------------------------
+# The UK feed below is the one proven working on 14 Aug 2026: 25 items.
 https://feeds.bbci.co.uk/news/uk/rss.xml
+https://feeds.bbci.co.uk/news/politics/rss.xml
+https://feeds.bbci.co.uk/news/business/rss.xml
+https://feeds.bbci.co.uk/news/health/rss.xml
+
+# --- The Guardian (theguardian.com) ---------------------------------
+https://www.theguardian.com/uk/rss
+
+# --- Sky News (news.sky.com) ----------------------------------------
+https://feeds.skynews.com/feeds/rss/uk.xml
+
+# --- The Independent (independent.co.uk) ----------------------------
+http://www.independent.co.uk/news/uk/rss
+
+
+# =====================================================================
+# HELD BACK - volume. Domain is whitelisted; enable when the pipeline
+# has run for a few days and the real operation cost is known.
+# =====================================================================
+
+# https://feeds.bbci.co.uk/news/education/rss.xml
+# https://feeds.bbci.co.uk/news/science_and_environment/rss.xml
+# https://feeds.bbci.co.uk/news/technology/rss.xml
+# https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml
+# https://feeds.bbci.co.uk/news/england/rss.xml
+# https://feeds.skynews.com/feeds/rss/home.xml
+
+
+# =====================================================================
+# HELD BACK - paywall. Telegraph is whitelisted, but the article pages
+# are paywalled, so the full-text fetch returns little or nothing and
+# the Persian article would be written from one summary sentence.
+# =====================================================================
+
+# https://www.telegraph.co.uk/rss.xml
+
+
+# =====================================================================
+# BLOCKED - domain NOT in the whitelist yet.
+# Add the domain to the Whitelist E-Gate FIRST, then remove the #.
+# =====================================================================
+
+# needs: standard.co.uk
+# https://www.standard.co.uk/news/rss
+
+# needs: channel4.com
+# https://www.channel4.com/news/rss
+
+# needs: mylondon.news
+# https://www.mylondon.news/news/?service=rss
+# https://www.mylondon.news/?service=rss
+
+# needs: mylondon.co.uk
+#   NOTE: the source report lists MyLondon under two different domains.
+#   At least one is wrong. The dry run will show which.
+# https://www.mylondon.co.uk/whats-on/?service=rss
+
+# needs: londonist.com
+# https://londonist.com/feed
+
+# needs: timeout.com
+# http://www.timeout.com/london/blog/feed.rss
+
+
+# =====================================================================
+# REPORTED AS HAVING NO USABLE FEED - not verified by us
+# ITV News, BBC London, Metro, City AM, GOV.UK, Bank of England,
+# Home Office, HMRC, NHS England, Ofgem.
+# GOV.UK in particular is worth re-checking separately.
+# =====================================================================
