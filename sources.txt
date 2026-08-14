@@ -1,0 +1,6 @@
+# UK Magazine - feed sources
+# One feed URL per line.
+# Lines starting with # are ignored.
+# Blank lines are ignored.
+
+https://feeds.bbci.co.uk/news/uk/rss.xml
