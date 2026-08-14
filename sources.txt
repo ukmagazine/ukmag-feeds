@@ -111,3 +111,5 @@ https://www.theguardian.com/education/rss
 # http://www.timeout.com/london/blog/feed.rss
 # https://www.gov.uk/search/all.atom?keywords=cost+of+living
 # https://thenudge.com/feed/
+# https://www.bankofengland.co.uk/rss/news.xml
+# https://london.eater.com/rss/index.xml?limit=50
