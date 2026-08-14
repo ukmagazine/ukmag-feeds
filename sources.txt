@@ -14,8 +14,9 @@
 #
 # Domains required by the ACTIVE list below:
 #   bbc.co.uk  theguardian.com  independent.co.uk  gov.uk
-#   bankofengland.co.uk  standard.co.uk  ianvisits.co.uk
-#   secretldn.com  eater.com  timeout.com
+#   timeout.com  ianvisits.co.uk  secretldn.com
+#
+# Measured 14 August 2026: approx 75 new articles per day.
 
 
 # =====================================================================
@@ -23,7 +24,6 @@
 # =====================================================================
 https://feeds.bbci.co.uk/news/politics/rss.xml
 https://www.theguardian.com/politics/rss
-https://www.gov.uk/government/organisations/home-office.atom
 
 
 # =====================================================================
@@ -38,7 +38,6 @@ https://www.theguardian.com/society/rss
 # =====================================================================
 https://feeds.bbci.co.uk/news/business/rss.xml
 https://www.theguardian.com/money/rss
-https://www.bankofengland.co.uk/rss/news.xml
 
 
 # =====================================================================
@@ -46,7 +45,6 @@ https://www.bankofengland.co.uk/rss/news.xml
 # =====================================================================
 https://www.timeout.com/london/news_sitemap.xml
 https://www.timeout.com/uk/news_sitemap.xml
-https://www.standard.co.uk/going-out/rss
 https://www.ianvisits.co.uk/articles/feed/
 
 
@@ -54,7 +52,6 @@ https://www.ianvisits.co.uk/articles/feed/
 # GUIDE
 # =====================================================================
 https://secretldn.com/feed/
-https://london.eater.com/rss/index.xml?limit=50
 
 
 # =====================================================================
@@ -83,12 +80,37 @@ https://www.theguardian.com/education/rss
 
 
 # =====================================================================
-# REMOVED - the publisher blocks automated access
-# MoneySavingExpert returned 403 Forbidden on 14 August 2026.
-# The URL is correct; the server refuses bots. Guardian Money covers
-# the same beat. Do not re-enable without the publisher's agreement.
+# REMOVED 14 Aug 2026 - broken or empty when tested
+# Do not re-enable any of these without a fresh dry run.
 # =====================================================================
+
+# Bank of England - .xml returned HTTP 500, the bare path returned
+# zero items. The correct URL is unknown. BBC Business carries the
+# same interest-rate and inflation stories anyway.
+# https://www.bankofengland.co.uk/rss/news.xml
+
+# Eater London - ?limit=50 returned 404, the bare URL returned zero.
+# https://london.eater.com/rss/index.xml
+
+# The London Standard, Going Out - returned 1 item, then 0. The
+# research report claimed 15/day. Time Out's sitemaps replaced it.
+# https://www.standard.co.uk/going-out/rss
+
+# MoneySavingExpert - HTTP 403 Forbidden. The URL is correct; the
+# server refuses bots. Do not retry without the publisher's
+# agreement. Guardian Money covers the same beat.
 # https://www.moneysavingexpert.com/news/feed/
+
+
+# =====================================================================
+# REMOVED 14 Aug 2026 - works, but the content is not news
+# Home Office returned 12 items/day of administrative guidance,
+# policy papers, transparency data and official statistics. Almost
+# all of it would burn a Jina fetch and an LLM triage call and then
+# be rejected. The immigration-and-visas search above covers the
+# same ground with better material.
+# =====================================================================
+# https://www.gov.uk/government/organisations/home-office.atom
 
 
 # =====================================================================
