@@ -7,6 +7,7 @@ and POSTs each new item to the Make ingestion webhook using the
 existing three-key contract: News_Title, News_Body, Source_Link.
 
 State lives in state/seen.json and is committed back by the workflow.
+A dry run writes no state and consumes nothing.
 """
 
 from __future__ import annotations
@@ -254,7 +255,7 @@ def main() -> int:
 
     now = datetime.now(timezone.utc).isoformat()
 
-    if first_run:
+    if first_run and not DRY_RUN:
         for item in items:
             seen[item["key"]] = now
         save_state(seen)
@@ -271,7 +272,6 @@ def main() -> int:
     for item in batch:
         if DRY_RUN:
             log(f"  DRY RUN  {item['title'][:80]}")
-            seen[item["key"]] = now
             sent += 1
             continue
         if post(item):
@@ -283,7 +283,11 @@ def main() -> int:
             log(f"  GIVING UP (will retry next run)  {item['link']}")
         time.sleep(PAUSE_BETWEEN_POSTS)
 
-    save_state(seen)
+    if DRY_RUN:
+        log("DRY RUN: state not written. Nothing was consumed.")
+    else:
+        save_state(seen)
+
     log(f"Done. sent={sent} failed={failed} dry_run={DRY_RUN}")
     return 0
 
