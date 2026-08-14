@@ -12,6 +12,21 @@ Two source formats are supported:
     that have dropped RSS. A sitemap carries a title and a date but
     no summary, so News_Body is empty for those items.
 
+Deduplication here is EXACT ONLY - never fuzzy:
+  - same article URL, within a run and across runs
+  - same article title, within a run and across runs
+
+Title matching exists because one publisher can issue the same story
+under two editions with different URLs - Time Out London and Time Out
+UK being the case this was written for. URL matching cannot see that.
+Every title-based drop is LOGGED, so a wrong drop is visible rather
+than silent. Titles shorter than MIN_TITLE_LEN are exempt, because a
+short generic title like "Business Daily" is not proof of sameness.
+
+Semantic deduplication - two outlets wording the same story
+differently - is NOT done here and must never be added here. It lives
+in modules 6, 13, 14 and 15 of `2.UK Mag - CORE ENGINE`.
+
 State lives in state/seen.json and is committed back by the workflow.
 A dry run writes no state and consumes nothing.
 """
@@ -44,6 +59,13 @@ DRY_RUN = os.environ.get("DRY_RUN", "false").strip().lower() == "true"
 MAX_ITEMS_PER_RUN = 25
 MAX_AGE_HOURS = 48
 STATE_RETENTION_DAYS = 14
+
+# Titles shorter than this are not used for deduplication.
+MIN_TITLE_LEN = 25
+
+# Prefix marking a title key inside the state file, so it can never
+# collide with a URL key.
+TITLE_PREFIX = "t:"
 
 FETCH_TIMEOUT = 30
 POST_TIMEOUT = 30
@@ -109,7 +131,7 @@ def clean_url(url: str) -> str:
 
 
 def dedup_key(url: str) -> str:
-    """The identity of an article. Only used for comparison, never sent."""
+    """The identity of an article by URL. For comparison only, never sent."""
     parsed = urlparse(clean_url(url))
     if not parsed.netloc:
         return ""
@@ -118,6 +140,30 @@ def dedup_key(url: str) -> str:
         host = host[4:]
     path = parsed.path.rstrip("/").lower() or "/"
     return f"{host}{path}?{parsed.query}" if parsed.query else f"{host}{path}"
+
+
+def title_key(title: str) -> str:
+    """
+    The identity of an article by title. For comparison only, never sent.
+
+    Normalisation is deliberately shallow: case, curly quotes, punctuation
+    and whitespace only. No stemming, no word removal, no similarity
+    scoring. Two titles match here only if they are the same sentence
+    typed the same way.
+
+    Returns an empty string for titles too short to be evidence.
+    """
+    if not title:
+        return ""
+    text = title.lower()
+    text = text.replace("\u2019", "'").replace("\u2018", "'")
+    text = text.replace("\u201c", '"').replace("\u201d", '"')
+    text = text.replace("\u2013", "-").replace("\u2014", "-")
+    text = re.sub(r"[^\w\s]", " ", text, flags=re.UNICODE)
+    text = re.sub(r"\s+", " ", text).strip()
+    if len(text) < MIN_TITLE_LEN:
+        return ""
+    return TITLE_PREFIX + text
 
 
 def title_from_url(url: str) -> str:
@@ -184,7 +230,16 @@ def save_state(seen: dict) -> None:
         ),
         encoding="utf-8",
     )
-    log(f"State saved: {len(pruned)} keys retained.")
+    urls = sum(1 for k in pruned if not k.startswith(TITLE_PREFIX))
+    titles = len(pruned) - urls
+    log(f"State saved: {urls} url key(s), {titles} title key(s) retained.")
+
+
+def remember(seen: dict, item: dict, stamp: str) -> None:
+    """Record an item as sent, by both URL and title."""
+    seen[item["key"]] = stamp
+    if item["tkey"]:
+        seen[item["tkey"]] = stamp
 
 
 # ---------------------------------------------------------------- parsers
@@ -253,9 +308,19 @@ def read_sitemap(content: bytes) -> list[dict]:
     return out
 
 
-def collect(urls: list[str]) -> list[dict]:
+def collect(urls: list[str]) -> tuple[list[dict], int]:
+    """
+    Fetch every source and return unique items plus a count of items
+    dropped as same-title duplicates.
+
+    Sources are processed in the order they appear in sources.txt, and
+    the FIRST source to carry a given title wins. Ordering in that file
+    is therefore an editorial choice: list the preferred edition first.
+    """
     horizon = datetime.now(timezone.utc) - timedelta(hours=MAX_AGE_HOURS)
     items: dict[str, dict] = {}
+    titles_seen: dict[str, str] = {}
+    title_drops = 0
 
     for source_url in urls:
         kind = "SITEMAP" if looks_like_sitemap(source_url) else "FEED"
@@ -285,17 +350,31 @@ def collect(urls: list[str]) -> list[dict]:
                 continue
             if key in items:
                 continue
+
+            tkey = title_key(raw_item["title"])
+            if tkey and tkey in titles_seen:
+                title_drops += 1
+                log(f"  DEDUP TITLE  {raw_item['title'][:70]}")
+                log(f"               dropped {link}")
+                log(f"               kept    {titles_seen[tkey]}")
+                continue
+
             items[key] = {
                 "key": key,
+                "tkey": tkey,
                 "title": raw_item["title"],
                 "body": raw_item["body"],
                 "link": link,
                 "published": raw_item["published"],
             }
+            if tkey:
+                titles_seen[tkey] = link
             added += 1
+
         log(f"{kind} OK      {source_url}  ->  {added} usable items")
 
-    return sorted(items.values(), key=lambda item: item["published"])
+    ordered = sorted(items.values(), key=lambda item: item["published"])
+    return ordered, title_drops
 
 
 def post(item: dict) -> bool:
@@ -337,21 +416,41 @@ def main() -> int:
     log(f"Loaded {len(sources)} source(s).")
 
     seen, first_run = load_state()
-    items = collect(sources)
+    items, title_drops = collect(sources)
+
     log(f"Collected {len(items)} unique item(s) inside the {MAX_AGE_HOURS}h window.")
+    if title_drops:
+        log(f"Dropped {title_drops} same-title duplicate(s) within this run.")
 
     no_body = sum(1 for item in items if not item["body"])
     if no_body:
         log(f"NOTE: {no_body} item(s) carry no summary text (sitemap sources).")
 
-    fresh = [item for item in items if item["key"] not in seen]
-    log(f"{len(fresh)} of those are new.")
+    fresh = []
+    seen_by_url = 0
+    seen_by_title = 0
+    for item in items:
+        if item["key"] in seen:
+            seen_by_url += 1
+            continue
+        if item["tkey"] and item["tkey"] in seen:
+            seen_by_title += 1
+            log(f"  DEDUP TITLE  already sent under another URL")
+            log(f"               {item['title'][:70]}")
+            log(f"               dropped {item['link']}")
+            continue
+        fresh.append(item)
+
+    log(
+        f"{len(fresh)} of those are new. "
+        f"({seen_by_url} seen by url, {seen_by_title} seen by title)"
+    )
 
     now = datetime.now(timezone.utc).isoformat()
 
     if first_run and not DRY_RUN:
         for item in items:
-            seen[item["key"]] = now
+            remember(seen, item, now)
         save_state(seen)
         log("FIRST RUN: everything recorded as seen, nothing sent.")
         log("The next run will send genuinely new articles only.")
@@ -369,7 +468,7 @@ def main() -> int:
             sent += 1
             continue
         if post(item):
-            seen[item["key"]] = now
+            remember(seen, item, now)
             sent += 1
             log(f"  SENT     {item['title'][:80]}")
         else:
