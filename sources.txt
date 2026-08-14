@@ -1,17 +1,21 @@
 # UK Magazine - feed sources
 #
-# One feed URL per line. Lines starting with # are ignored.
+# One URL per line. Lines starting with # are ignored.
 #
-# A feed only works if its ARTICLE domain is in the Whitelist E-Gate
+# Two formats are supported:
+#   - RSS / Atom feeds
+#   - Google News XML sitemaps, for publishers that dropped RSS.
+#     A sitemap carries a title and a date but NO summary, so
+#     News_Body arrives empty and the full text comes from Jina.
+#
+# A source only works if its ARTICLE domain is in the Whitelist E-Gate
 # filter (Core Engine, link 20 -> 36). A missing domain means the
 # article is fetched, sent, and then silently discarded.
 #
 # Domains required by the ACTIVE list below:
 #   bbc.co.uk  theguardian.com  independent.co.uk  gov.uk
-#   bankofengland.co.uk  moneysavingexpert.com  standard.co.uk
-#   ianvisits.co.uk  secretldn.com  eater.com
-#
-# Measured total: approx 92 new articles per day.
+#   bankofengland.co.uk  standard.co.uk  ianvisits.co.uk
+#   secretldn.com  eater.com  timeout.com
 
 
 # =====================================================================
@@ -33,14 +37,15 @@ https://www.theguardian.com/society/rss
 # ECONOMY
 # =====================================================================
 https://feeds.bbci.co.uk/news/business/rss.xml
-https://www.moneysavingexpert.com/news/feed/
-https://www.bankofengland.co.uk/rss/news
 https://www.theguardian.com/money/rss
+https://www.bankofengland.co.uk/rss/news.xml
 
 
 # =====================================================================
 # EVENT
 # =====================================================================
+https://www.timeout.com/london/news_sitemap.xml
+https://www.timeout.com/uk/news_sitemap.xml
 https://www.standard.co.uk/going-out/rss
 https://www.ianvisits.co.uk/articles/feed/
 
@@ -49,7 +54,7 @@ https://www.ianvisits.co.uk/articles/feed/
 # GUIDE
 # =====================================================================
 https://secretldn.com/feed/
-https://london.eater.com/rss/index.xml
+https://london.eater.com/rss/index.xml?limit=50
 
 
 # =====================================================================
@@ -78,6 +83,15 @@ https://www.theguardian.com/education/rss
 
 
 # =====================================================================
+# REMOVED - the publisher blocks automated access
+# MoneySavingExpert returned 403 Forbidden on 14 August 2026.
+# The URL is correct; the server refuses bots. Guardian Money covers
+# the same beat. Do not re-enable without the publisher's agreement.
+# =====================================================================
+# https://www.moneysavingexpert.com/news/feed/
+
+
+# =====================================================================
 # EXCLUDED ON VOLUME - all verified working, all too expensive
 # =====================================================================
 # https://www.standard.co.uk/news/london/rss        25/day
@@ -92,13 +106,19 @@ https://www.theguardian.com/education/rss
 # https://www.gov.uk/search/news-and-communications.atom  30/day
 # https://www.gov.uk/search/all.atom?keywords=tax         10/day
 
+
+# =====================================================================
 # EXCLUDED - duplicates a source already active
+# =====================================================================
 # https://feeds.skynews.com/feeds/rss/uk.xml
 # https://www.gov.uk/government/organisations/hm-revenue-customs.atom
 # https://www.england.nhs.uk/feed/
 
+
+# =====================================================================
 # EXCLUDED - paywalled article pages, or headline only.
 # The Persian article would be written from one sentence.
+# =====================================================================
 # https://www.ft.com/rss/home/uk
 # https://www.economist.com/finance-and-economics/rss.xml
 # https://www.telegraph.co.uk/business/rss.xml
@@ -106,10 +126,16 @@ https://www.theguardian.com/education/rss
 
 
 # =====================================================================
-# DISCOVERY - untested. Free to test with one dry run.
+# DEAD - legacy Time Out RSS. Replaced by the sitemaps above.
+# Kept only so nobody re-discovers and re-tries them.
 # =====================================================================
 # http://www.timeout.com/london/blog/feed.rss
+# https://www.timeout.com/london/things-to-do/rss
+# https://www.timeout.com/london/food-drink/rss
+
+
+# =====================================================================
+# DISCOVERY - untested. Free to test with one dry run.
+# =====================================================================
 # https://www.gov.uk/search/all.atom?keywords=cost+of+living
 # https://thenudge.com/feed/
-# https://www.bankofengland.co.uk/rss/news.xml
-# https://london.eater.com/rss/index.xml?limit=50
