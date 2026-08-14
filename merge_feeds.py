@@ -2,9 +2,15 @@
 """
 UK Magazine - feed merger.
 
-Reads sources.txt, fetches every feed, drops anything already sent,
+Reads sources.txt, fetches every source, drops anything already sent,
 and POSTs each new item to the Make ingestion webhook using the
 existing three-key contract: News_Title, News_Body, Source_Link.
+
+Two source formats are supported:
+  - RSS and Atom feeds, parsed by feedparser
+  - Google News XML sitemaps, parsed natively. Used for publishers
+    that have dropped RSS. A sitemap carries a title and a date but
+    no summary, so News_Body is empty for those items.
 
 State lives in state/seen.json and is committed back by the workflow.
 A dry run writes no state and consumes nothing.
@@ -18,6 +24,7 @@ import os
 import re
 import sys
 import time
+import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import parse_qs, parse_qsl, urlencode, urlparse, urlunparse
@@ -45,6 +52,11 @@ POST_BACKOFF = 5
 PAUSE_BETWEEN_POSTS = 1.0
 
 USER_AGENT = "UKMagazineFeedBot/1.0 (+https://theukmag.com)"
+
+SITEMAP_NS = {
+    "sm": "http://www.sitemaps.org/schemas/sitemap/0.9",
+    "news": "http://www.google.com/schemas/sitemap-news/0.9",
+}
 
 TRACKING_PARAMS = {
     "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
@@ -108,6 +120,28 @@ def dedup_key(url: str) -> str:
     return f"{host}{path}?{parsed.query}" if parsed.query else f"{host}{path}"
 
 
+def title_from_url(url: str) -> str:
+    """Last resort when a sitemap entry carries no title."""
+    slug = urlparse(url).path.rstrip("/").split("/")[-1]
+    slug = re.sub(r"\.(html?|php|aspx)$", "", slug, flags=re.I)
+    slug = re.sub(r"[-_]+", " ", slug).strip()
+    slug = re.sub(r"\s+\d{4,}$", "", slug)
+    return slug[:1].upper() + slug[1:] if slug else ""
+
+
+def parse_date(raw: str) -> datetime | None:
+    raw = (raw or "").strip()
+    if not raw:
+        return None
+    try:
+        parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
 def load_sources() -> list[str]:
     urls: list[str] = []
     if SOURCES_FILE.exists():
@@ -153,6 +187,13 @@ def save_state(seen: dict) -> None:
     log(f"State saved: {len(pruned)} keys retained.")
 
 
+# ---------------------------------------------------------------- parsers
+
+
+def looks_like_sitemap(url: str) -> bool:
+    return "sitemap" in url.lower()
+
+
 def entry_time(entry) -> datetime:
     for field in ("published_parsed", "updated_parsed"):
         value = getattr(entry, field, None)
@@ -164,46 +205,95 @@ def entry_time(entry) -> datetime:
     return datetime.now(timezone.utc)
 
 
+def read_feed(content: bytes) -> list[dict]:
+    parsed = feedparser.parse(content)
+    out = []
+    for entry in parsed.entries:
+        out.append({
+            "link": getattr(entry, "link", ""),
+            "title": strip_html(getattr(entry, "title", "")),
+            "body": strip_html(
+                getattr(entry, "summary", "")
+                or getattr(entry, "description", "")
+            ),
+            "published": entry_time(entry),
+        })
+    return out
+
+
+def read_sitemap(content: bytes) -> list[dict]:
+    root = ET.fromstring(content)
+    out = []
+    for url_el in root.findall("sm:url", SITEMAP_NS):
+        loc = (url_el.findtext("sm:loc", "", SITEMAP_NS) or "").strip()
+        if not loc:
+            continue
+        title = ""
+        published = None
+        news_el = url_el.find("news:news", SITEMAP_NS)
+        if news_el is not None:
+            title = strip_html(
+                news_el.findtext("news:title", "", SITEMAP_NS) or ""
+            )
+            published = parse_date(
+                news_el.findtext("news:publication_date", "", SITEMAP_NS) or ""
+            )
+        if published is None:
+            published = parse_date(
+                url_el.findtext("sm:lastmod", "", SITEMAP_NS) or ""
+            )
+        if not title:
+            title = title_from_url(loc)
+        out.append({
+            "link": loc,
+            "title": title,
+            "body": "",
+            "published": published or datetime.now(timezone.utc),
+        })
+    return out
+
+
 def collect(urls: list[str]) -> list[dict]:
     horizon = datetime.now(timezone.utc) - timedelta(hours=MAX_AGE_HOURS)
     items: dict[str, dict] = {}
-    for feed_url in urls:
+
+    for source_url in urls:
+        kind = "SITEMAP" if looks_like_sitemap(source_url) else "FEED"
         try:
             response = requests.get(
-                feed_url,
+                source_url,
                 timeout=FETCH_TIMEOUT,
                 headers={"User-Agent": USER_AGENT},
             )
             response.raise_for_status()
-            parsed = feedparser.parse(response.content)
+            raw = (
+                read_sitemap(response.content)
+                if kind == "SITEMAP"
+                else read_feed(response.content)
+            )
         except Exception as exc:
-            log(f"FEED FAILED  {feed_url}  ->  {exc}")
+            log(f"{kind} FAILED  {source_url}  ->  {exc}")
             continue
 
         added = 0
-        for entry in parsed.entries:
-            link = clean_url(getattr(entry, "link", ""))
+        for raw_item in raw:
+            link = clean_url(raw_item["link"])
             key = dedup_key(link)
-            title = strip_html(getattr(entry, "title", ""))
-            if not key or not title:
+            if not key or not raw_item["title"]:
                 continue
-            published = entry_time(entry)
-            if published < horizon:
+            if raw_item["published"] < horizon:
                 continue
             if key in items:
                 continue
             items[key] = {
                 "key": key,
-                "title": title,
-                "body": strip_html(
-                    getattr(entry, "summary", "")
-                    or getattr(entry, "description", "")
-                ),
+                "title": raw_item["title"],
+                "body": raw_item["body"],
                 "link": link,
-                "published": published,
+                "published": raw_item["published"],
             }
             added += 1
-        log(f"FEED OK      {feed_url}  ->  {added} usable items")
+        log(f"{kind} OK      {source_url}  ->  {added} usable items")
 
     return sorted(items.values(), key=lambda item: item["published"])
 
@@ -242,13 +332,17 @@ def main() -> int:
 
     sources = load_sources()
     if not sources:
-        log("FATAL: no feed URLs found. Check sources.txt.")
+        log("FATAL: no sources found. Check sources.txt.")
         return 1
-    log(f"Loaded {len(sources)} feed(s).")
+    log(f"Loaded {len(sources)} source(s).")
 
     seen, first_run = load_state()
     items = collect(sources)
     log(f"Collected {len(items)} unique item(s) inside the {MAX_AGE_HOURS}h window.")
+
+    no_body = sum(1 for item in items if not item["body"])
+    if no_body:
+        log(f"NOTE: {no_body} item(s) carry no summary text (sitemap sources).")
 
     fresh = [item for item in items if item["key"] not in seen]
     log(f"{len(fresh)} of those are new.")
