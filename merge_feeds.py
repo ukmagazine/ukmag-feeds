@@ -41,7 +41,7 @@ WEBHOOK_URL = os.environ.get("INGESTION_WEBHOOK_URL", "").strip()
 ALERTS_RAW = os.environ.get("GOOGLE_ALERTS_FEEDS", "").strip()
 DRY_RUN = os.environ.get("DRY_RUN", "false").strip().lower() == "true"
 
-MAX_ITEMS_PER_RUN = 1
+MAX_ITEMS_PER_RUN = 25
 MAX_AGE_HOURS = 48
 STATE_RETENTION_DAYS = 14
 
