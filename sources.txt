@@ -1,53 +1,113 @@
 # UK Magazine - feed sources
-# DISCOVERY LIST - for dry run only.
-# Unverified section-feed candidates for Guardian and Independent.
-# A dry run sends nothing and writes no state.
+#
+# One feed URL per line. Lines starting with # are ignored.
+#
+# A feed only works if its ARTICLE domain is in the Whitelist E-Gate
+# filter (Core Engine, link 20 -> 36). A missing domain means the
+# article is fetched, sent, and then silently discarded.
+#
+# Domains required by the ACTIVE list below:
+#   bbc.co.uk  theguardian.com  independent.co.uk  gov.uk
+#   bankofengland.co.uk  moneysavingexpert.com  standard.co.uk
+#   ianvisits.co.uk  secretldn.com  eater.com
+#
+# Measured total: approx 92 new articles per day.
 
 
 # =====================================================================
-# BBC - already proven working 14 Aug 2026
+# POLITICS
 # =====================================================================
-
-https://feeds.bbci.co.uk/news/uk/rss.xml
 https://feeds.bbci.co.uk/news/politics/rss.xml
+https://www.theguardian.com/politics/rss
+https://www.gov.uk/government/organisations/home-office.atom
+
+
+# =====================================================================
+# SOCIETY
+# =====================================================================
+https://www.gov.uk/search/all.atom?keywords=immigration+and+visas
+https://www.theguardian.com/society/rss
+
+
+# =====================================================================
+# ECONOMY
+# =====================================================================
 https://feeds.bbci.co.uk/news/business/rss.xml
+https://www.moneysavingexpert.com/news/feed/
+https://www.bankofengland.co.uk/rss/news
+https://www.theguardian.com/money/rss
+
+
+# =====================================================================
+# EVENT
+# =====================================================================
+https://www.standard.co.uk/going-out/rss
+https://www.ianvisits.co.uk/articles/feed/
+
+
+# =====================================================================
+# GUIDE
+# =====================================================================
+https://secretldn.com/feed/
+https://london.eater.com/rss/index.xml
+
+
+# =====================================================================
+# TRAVEL
+# =====================================================================
+https://www.theguardian.com/travel/rss
+
+
+# =====================================================================
+# HEALTH
+# =====================================================================
 https://feeds.bbci.co.uk/news/health/rss.xml
 
 
 # =====================================================================
-# Sky News - proven working
+# TECH AND AUTO
 # =====================================================================
-
-https://feeds.skynews.com/feeds/rss/uk.xml
-
-
-# =====================================================================
-# THE GUARDIAN - section candidates, UNVERIFIED
-# The whole-site UK feed is deliberately absent from this test.
-# =====================================================================
-
-https://www.theguardian.com/uk-news/rss
-https://www.theguardian.com/politics/rss
-https://www.theguardian.com/business/rss
-https://www.theguardian.com/technology/rss
-https://www.theguardian.com/science/rss
-https://www.theguardian.com/environment/rss
-https://www.theguardian.com/money/rss
-https://www.theguardian.com/society/rss
-https://www.theguardian.com/education/rss
-https://www.theguardian.com/travel/rss
-https://www.theguardian.com/culture/rss
-
-
-# =====================================================================
-# THE INDEPENDENT - section candidates, UNVERIFIED
-# The whole-site UK feed is deliberately absent from this test.
-# =====================================================================
-
-https://www.independent.co.uk/news/uk/home-news/rss
-https://www.independent.co.uk/news/uk/politics/rss
-https://www.independent.co.uk/news/business/rss
 https://www.independent.co.uk/tech/rss
-https://www.independent.co.uk/travel/rss
-https://www.independent.co.uk/climate-change/news/rss
-https://www.independent.co.uk/life-style/health-and-families/rss
+
+
+# =====================================================================
+# GENERAL UK NEWS AND EDUCATION
+# =====================================================================
+https://feeds.bbci.co.uk/news/uk/rss.xml
+https://www.theguardian.com/education/rss
+
+
+# =====================================================================
+# EXCLUDED ON VOLUME - all verified working, all too expensive
+# =====================================================================
+# https://www.standard.co.uk/news/london/rss        25/day
+# https://www.mylondon.news/whats-on/?service=rss   15/day
+# https://www.mylondon.news/news/east-london-news/?service=rss  10/day
+# https://www.cityam.com/feed/                      25/day
+# https://www.thisismoney.co.uk/money/index.rss     20/day
+# https://metro.co.uk/tag/london/feed/              20/day
+# https://www.autoexpress.co.uk/feed/all            15/day
+# https://www.uktech.news/feed                      10/day
+# https://londonist.com/feed                         8/day
+# https://www.gov.uk/search/news-and-communications.atom  30/day
+# https://www.gov.uk/search/all.atom?keywords=tax         10/day
+
+# EXCLUDED - duplicates a source already active
+# https://feeds.skynews.com/feeds/rss/uk.xml
+# https://www.gov.uk/government/organisations/hm-revenue-customs.atom
+# https://www.england.nhs.uk/feed/
+
+# EXCLUDED - paywalled article pages, or headline only.
+# The Persian article would be written from one sentence.
+# https://www.ft.com/rss/home/uk
+# https://www.economist.com/finance-and-economics/rss.xml
+# https://www.telegraph.co.uk/business/rss.xml
+# https://www.hot-dinners.com/?format=feed&type=rss
+
+
+# =====================================================================
+# DISCOVERY - untested. Free to test with one dry run.
+# =====================================================================
+# http://www.timeout.com/london/blog/feed.rss
+# https://www.gov.uk/search/all.atom?keywords=cost+of+living
+# https://thenudge.com/feed/
