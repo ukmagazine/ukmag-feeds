@@ -1,0 +1,54 @@
+name: Merge feeds
+
+on:
+  schedule:
+    - cron: "20 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Log only, send nothing"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: merge-feeds
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install feedparser requests
+
+      - name: Run the merger
+        env:
+          INGESTION_WEBHOOK_URL: ${{ secrets.INGESTION_WEBHOOK_URL }}
+          GOOGLE_ALERTS_FEEDS: ${{ secrets.GOOGLE_ALERTS_FEEDS }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: python merge_feeds.py
+
+      - name: Commit the state file
+        run: |
+          git config user.name "ukmag-feed-bot"
+          git config user.email "actions@github.com"
+          git add state/seen.json
+          if git diff --staged --quiet; then
+            echo "No state change."
+          else
+            git commit -m "state: seen list updated"
+            git push
+          fi
