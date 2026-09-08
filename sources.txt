@@ -29,7 +29,8 @@ https://www.theguardian.com/politics/rss
 # =====================================================================
 # SOCIETY
 # =====================================================================
-https://www.gov.uk/search/all.atom?keywords=immigration+and+visas
+# https://www.gov.uk/search/all.atom?keywords=immigration+and+visas
+https://www.gov.uk/search/all.atom?keywords=immigration+and+visas&content_purpose_supergroup=news_and_communications
 https://www.theguardian.com/society/rss
 
 
