@@ -32,8 +32,12 @@ https://www.theguardian.com/politics/rss
 # https://www.gov.uk/search/all.atom?keywords=immigration+and+visas
 #https://www.gov.uk/search/all.atom?keywords=immigration+and+visas&content_purpose_supergroup=news_and_communications
 https://www.theguardian.com/society/rss
-https://www.theguardian.com/uk/immigration/rss
-https://www.theguardian.com/world/migration/rss
+#https://www.theguardian.com/uk/immigration/rss
+#https://www.theguardian.com/world/migration/rss
+# REMOVED 08 Sep 2026 - the UK immigration beat is dominated by
+# far-right protest, riot and criminal-trial coverage. Red lines
+# rejected 15 of 19 items in the 08 Sep dry run. Guardian Society
+# covers the desk. Do not re-enable.
 
 
 # =====================================================================
