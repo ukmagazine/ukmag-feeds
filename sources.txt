@@ -77,6 +77,10 @@ https://feeds.bbci.co.uk/news/health/rss.xml
 # TECH AND AUTO
 # =====================================================================
 https://www.independent.co.uk/tech/rss
+https://www.techadvisor.com/feed
+https://www.theverge.com/rss/index.xml
+https://techcrunch.com/feed/
+https://www.engadget.com/rss.xml
 
 
 # =====================================================================
