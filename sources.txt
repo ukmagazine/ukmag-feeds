@@ -76,11 +76,18 @@ https://feeds.bbci.co.uk/news/health/rss.xml
 # =====================================================================
 # TECH AND AUTO
 # =====================================================================
-https://www.independent.co.uk/tech/rss
+# https://www.independent.co.uk/tech/rss
 https://www.techadvisor.com/feed
 https://www.theverge.com/rss/index.xml
-https://techcrunch.com/feed/
-https://www.engadget.com/rss.xml
+# https://techcrunch.com/feed/
+# https://www.engadget.com/rss.xml
+# REMOVED 08 Sep 2026 - Independent Tech: only 2/day and fully
+# overlapped by Tech Advisor. Removed to fund The Verge.
+# REJECTED 08 Sep 2026 - TechCrunch: 5/day but the content is startup
+# funding, legal disputes and executive appointments. Measured in the
+# 08 Sep dry run. Wrong beat, not a volume problem.
+# REJECTED 08 Sep 2026 - Engadget: 10/day, ~2,700 credits/month, and
+# duplicates The Verge's coverage. Too expensive for what it adds.
 
 
 # =====================================================================
