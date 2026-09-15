@@ -63,6 +63,22 @@ STATE_RETENTION_DAYS = 14
 # Titles shorter than this are not used for deduplication.
 MIN_TITLE_LEN = 25
 
+# Publisher URL sections that are never sent to Make. Matched on the
+# article URL only - never on a title or body. Each drop is logged.
+BLOCKED_SECTIONS = (
+    "bbc.co.uk/sport/",
+    "bbc.co.uk/news/videos/",
+    "bbc.co.uk/sounds/",
+    "bbc.co.uk/iplayer/",
+    "bbc.co.uk/weather/",
+    "theguardian.com/sport/",
+    "theguardian.com/football/",
+    "theguardian.com/commentisfree/",
+    "theguardian.com/world/",
+    "theguardian.com/us-news/",
+    "theguardian.com/australia-news/",
+    "theguardian.com/global-development/",
+)
 # Prefix marking a title key inside the state file, so it can never
 # collide with a URL key.
 TITLE_PREFIX = "t:"
@@ -345,6 +361,9 @@ def collect(urls: list[str]) -> tuple[list[dict], int]:
             link = clean_url(raw_item["link"])
             key = dedup_key(link)
             if not key or not raw_item["title"]:
+                continue
+            if key.startswith(BLOCKED_SECTIONS):
+                log(f"  BLOCKED SECTION  {link}")
                 continue
             if raw_item["published"] < horizon:
                 continue
