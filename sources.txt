@@ -23,7 +23,9 @@
 # POLITICS
 # =====================================================================
 https://feeds.bbci.co.uk/news/politics/rss.xml
-https://www.theguardian.com/politics/rss
+# https://www.theguardian.com/politics/rss
+# REMOVED 15 Sep 2026 - overlaps BBC Politics, and most items were
+# opinion or party reaction. Removed to save Make credits.
 
 
 # =====================================================================
