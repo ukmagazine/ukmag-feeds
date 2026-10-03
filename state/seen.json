@@ -1,6 +1,5 @@
 {
  "seen": {
-  "bbc.co.uk/news/articles/c1mvz3nyjxno": "2026-09-19T21:18:34.470992+00:00",
   "bbc.co.uk/news/articles/c20veglyjp8o": "2026-09-20T23:08:21.634566+00:00",
   "bbc.co.uk/news/articles/c20zgjzz0e4o": "2026-09-25T11:08:44.351846+00:00",
   "bbc.co.uk/news/articles/c2dwg3zexkpo": "2026-09-23T00:37:37.637855+00:00",
@@ -243,6 +242,7 @@
   "bbc.co.uk/news/articles/ckg59pnr8g78o": "2026-09-27T09:32:56.848550+00:00",
   "bbc.co.uk/news/articles/ckg7q33gnwro": "2026-09-25T23:04:37.088280+00:00",
   "bbc.co.uk/news/articles/ckge4848pzjro": "2026-09-21T06:20:05.199914+00:00",
+  "bbc.co.uk/news/articles/ckgw8yq4kyzo": "2026-10-03T22:17:42.825468+00:00",
   "bbc.co.uk/news/articles/ckj06007g600o": "2026-10-02T10:44:31.079488+00:00",
   "bbc.co.uk/news/articles/ckj0639455rro": "2026-09-24T17:02:51.750041+00:00",
   "bbc.co.uk/news/articles/ckjrxpz03w8no": "2026-09-21T22:15:34.624836+00:00",
@@ -349,6 +349,7 @@
   "bbc.co.uk/news/articles/cmlylpgdwz56o": "2026-09-21T09:35:31.268059+00:00",
   "bbc.co.uk/news/articles/cmlylxprwkjzo": "2026-10-01T11:45:35.763496+00:00",
   "bbc.co.uk/news/articles/cmlyr71jq44wo": "2026-09-30T16:56:25.243162+00:00",
+  "bbc.co.uk/news/articles/cmn06l362ypeo": "2026-10-03T22:17:42.825468+00:00",
   "bbc.co.uk/news/articles/cmn0749g5gryo": "2026-09-28T13:09:28.263746+00:00",
   "bbc.co.uk/news/articles/cmn0jey2dde7o": "2026-09-28T00:45:25.773541+00:00",
   "bbc.co.uk/news/articles/cmn8e887716vo": "2026-10-03T12:13:22.865287+00:00",
@@ -906,6 +907,7 @@
   "t:apple s reportedly developing a smart home camera that doesn t record video": "2026-10-02T00:47:04.625016+00:00",
   "t:apple will limit mac disk access as ai agents substantially increase risk": "2026-10-02T22:27:05.530656+00:00",
   "t:apprentice star tells pm why pie shop is closing": "2026-09-29T06:13:55.352685+00:00",
+  "t:are ai models the next big danger for body image": "2026-10-03T22:17:42.825468+00:00",
   "t:are baby girls more sociable super el niño meningitis outbreak explained podcast": "2026-09-24T05:28:34.613555+00:00",
   "t:artist 94 thrilled by house of commons exhibition": "2026-09-20T18:16:00.716663+00:00",
   "t:astrid bakery alexandra palace time out london": "2026-09-23T13:29:22.503248+00:00",
@@ -1305,7 +1307,6 @@
   "t:i d rather pay thousands on a holiday meet the pensioners spending the kids inheritance": "2026-09-22T00:59:42.621588+00:00",
   "t:i didn t know my partner was raping me while i slept": "2026-09-24T05:28:34.613555+00:00",
   "t:i don t have a buoyancy aid living without the bank of mum and dad": "2026-09-23T00:37:37.637855+00:00",
-  "t:i feel like i m cancelling out her life the wrenching work of clearing out a parent s home": "2026-09-19T21:18:34.470992+00:00",
   "t:i got married in it readers on their favourite secondhand fashion finds": "2026-09-20T14:55:29.682994+00:00",
   "t:i got to see google s wild ideas about the future of laptops": "2026-09-21T17:30:10.667290+00:00",
   "t:i had no heating or electricity for more than two years now i have a new island home": "2026-09-24T14:28:29.749619+00:00",
@@ -1488,7 +1489,6 @@
   "t:meta s ai agent is a cute little guy who s great at spending my money": "2026-09-23T22:16:44.105712+00:00",
   "t:meta s muse ai charms can interact with each other": "2026-09-24T15:22:34.389553+00:00",
   "t:meta s muse ai sent a youtuber s address to a stranger": "2026-09-29T18:33:51.386255+00:00",
-  "t:meta s muse is creepy but maybe not for the reasons you think": "2026-09-19T21:18:34.470992+00:00",
   "t:meta s next vr device isn t a headset it s glasses": "2026-09-24T00:42:19.770803+00:00",
   "t:mi5 china alert will send chill through uk s cash strapped universities": "2026-09-30T13:51:25.278410+00:00",
   "t:mi5 issues spy alert to uk universities over chinese front company stealing research": "2026-09-30T13:51:25.278410+00:00",
@@ -1853,7 +1853,6 @@
   "t:tell us what happened after you froze your eggs": "2026-10-01T16:00:33.010706+00:00",
   "t:tell us what s in your packed lunch": "2026-09-20T11:49:24.005726+00:00",
   "t:ten nhs staff removed over noah woods data breach": "2026-09-27T09:32:56.848550+00:00",
-  "t:tens of thousands of fridge freezers left at docks as household collections suspended": "2026-09-19T21:18:34.470992+00:00",
   "t:tension and violence rising among young people in south london police tell bbc": "2026-10-01T08:55:42.196799+00:00",
   "t:terrifying 101 acre data centre plans would be heartbreaking campaigners warn": "2026-09-22T06:01:16.629469+00:00",
   "t:tesla s optimus robot is going through growing pains": "2026-09-25T19:49:09.319058+00:00",
@@ -2042,6 +2041,7 @@
   "t:tories committed to pension triple lock deputy leader says": "2026-10-01T16:00:33.010706+00:00",
   "t:tories pledge to bring back tax free shopping for tourists": "2026-09-21T11:49:34.583452+00:00",
   "t:tories pledge to build 50 000 new prison places": "2026-10-02T22:27:05.530656+00:00",
+  "t:tories pledge to scrap 100 000 childcare cliff edge": "2026-10-03T22:17:42.825468+00:00",
   "t:tories would prevent long term jobless spending benefits on alcohol and cigarettes": "2026-09-23T22:16:44.105712+00:00",
   "t:tory ex ministers face serious questions over migrant centre chaos inquiry hears": "2026-09-25T19:49:09.319058+00:00",
   "t:tourism tax needs to be more flexible in wales warns expert": "2026-09-27T22:09:50.422679+00:00",
@@ -2503,7 +2503,6 @@
   "theguardian.com/society/2026/sep/30/healthy-babies-programme-to-be-expanded-across-england": "2026-09-30T07:28:43.127819+00:00",
   "theguardian.com/society/2026/sep/30/menopause-supplements-no-better-than-multivitamin-which": "2026-09-30T07:28:43.127819+00:00",
   "theguardian.com/society/ng-interactive/2026/oct/04/young-generation-lonely-silence": "2026-10-03T19:19:57.537564+00:00",
-  "theguardian.com/society/ng-interactive/2026/sep/20/i-feel-like-im-cancelling-out-her-life-the-wrenching-work-of-clearing-out-a-parents-home": "2026-09-19T21:18:34.470992+00:00",
   "theguardian.com/technology/2026/oct/01/cars-smart-features-spy-gps-chinese-imports": "2026-10-01T11:45:35.763496+00:00",
   "theguardian.com/technology/2026/sep/28/teachers-euan-blair-firm-report-horrendous-stress-ai-used-to-rate-their-work": "2026-09-28T13:09:28.263746+00:00",
   "theguardian.com/technology/2026/sep/29/mac-mini-m6-review": "2026-09-29T06:13:55.352685+00:00",
@@ -2559,7 +2558,6 @@
   "theverge.com/ai-artificial-intelligence/1003925/suno-speech-ai-voice-feature-beta-availability": "2026-10-02T10:44:31.079488+00:00",
   "theverge.com/ai-artificial-intelligence/1004096/openai-chatgpt-dots-hands-on-agent": "2026-10-02T18:26:09.891034+00:00",
   "theverge.com/ai-artificial-intelligence/1004408/openai-safety-quits-sounding-the-alarm": "2026-10-03T15:44:03.128778+00:00",
-  "theverge.com/ai-artificial-intelligence/997833/meta-muse-creepy": "2026-09-19T21:18:34.470992+00:00",
   "theverge.com/ai-artificial-intelligence/997867/trump-ai-force-ai-czar": "2026-09-20T18:16:00.716663+00:00",
   "theverge.com/ai-artificial-intelligence/997936/nvidia-jensen-huang-ai-fears-overblown": "2026-09-20T20:58:50.627887+00:00",
   "theverge.com/ai-artificial-intelligence/998090/un-ai-panel-hugging-face-hack-precautionary-principle": "2026-09-21T11:49:34.583452+00:00",
@@ -2917,5 +2915,5 @@
   "timeout.com/uk/news/worlds-first-minecraft-hotel-chessington-092926": "2026-09-29T06:13:55.352685+00:00",
   "timeout.com/uk/things-to-do/best-cabins-in-the-uk": "2026-09-25T15:12:46.455728+00:00"
  },
- "updated": "2026-10-03T19:20:04.895367+00:00"
+ "updated": "2026-10-03T22:17:45.843912+00:00"
 }
